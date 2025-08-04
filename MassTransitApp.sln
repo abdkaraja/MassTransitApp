@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36301.6
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MassTransitApp", "MassTransitApp\MassTransitApp.csproj", "{1AD19C5B-94F1-42A7-8260-153E31ADE953}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1-Consumers", "1-Consumers", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsumerApp", "ConsumerApp\ConsumerApp.csproj", "{65CBC67E-7124-4E74-8FB0-699E3157A9A3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1AD19C5B-94F1-42A7-8260-153E31ADE953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AD19C5B-94F1-42A7-8260-153E31ADE953}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AD19C5B-94F1-42A7-8260-153E31ADE953}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AD19C5B-94F1-42A7-8260-153E31ADE953}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65CBC67E-7124-4E74-8FB0-699E3157A9A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65CBC67E-7124-4E74-8FB0-699E3157A9A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65CBC67E-7124-4E74-8FB0-699E3157A9A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65CBC67E-7124-4E74-8FB0-699E3157A9A3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{65CBC67E-7124-4E74-8FB0-699E3157A9A3} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {265DAE8E-9E72-4C76-8F8F-F2DEB4F0B14D}
+	EndGlobalSection
+EndGlobal
