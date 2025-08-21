@@ -1,5 +1,6 @@
 ﻿using MassTransit;
 using MassTransitApp;
+using MassTransitApp.Saga;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,12 @@ builder.Services.AddMassTransit(x =>
     x.SetKebabCaseEndpointNameFormatter();
     x.AddConsumers(typeof(Subscriper).Assembly);
 
+    x.AddSagaStateMachine<NewsletterOnboardingSaga, NewsletterOnboardingSagaData>()
+    .EntityFrameworkRepository(r =>
+    {
+        r.ExistingDbContext<AppDbContext>();
+        r.UsePostgres();
+    });
     // Configure transport (example with RabbitMQ)
     x.UsingRabbitMq((context, cfg) =>
     {
@@ -35,6 +42,7 @@ builder.Services.AddMassTransit(x =>
             h.Password("guest");
         });
 
+        cfg.UseInMemoryOutbox(context);
         cfg.ConfigureEndpoints(context);
     });
 });

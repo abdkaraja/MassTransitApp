@@ -22,7 +22,42 @@ namespace MassTransitApp.Saga
             Event(() => WelcomeEmailSent, e => e.CorrelateById(m => m.Message.SubscriberId));
             Event(() => FollowUpEmailSent, e => e.CorrelateById(m => m.Message.SubscriberId));
 
+            Initially(
+                When(SubscriberCreated)
+                    .Then(context =>
+                    {
+                        context.Saga.SubscriberId = context.Message.SubscriberId;
+                        context.Saga.Email = context.Message.Email;
+                    })
+                    .TransitionTo(Welcomeing)
+                    .Publish(context => new SendWelcomeEmail(context.Message.SubscriberId, context.Message.Email))
+            );
 
+            During(Welcomeing,
+                When(WelcomeEmailSent)
+                    .Then(context =>
+                    {
+                        context.Saga.WelcomeEmailSent = true;
+                    })
+                    .TransitionTo(FollowingUp)
+                    .Publish(context => new SendFollowUpEmail(context.Message.SubscriberId, context.Message.Email))
+            );
+
+            During(FollowingUp,
+                When(FollowUpEmailSent)
+                    .Then(context =>
+                    {
+                        context.Saga.FollowUpEmailSent = true;
+                        context.Saga.OnboardingCompleted = true;
+                    })
+                    .TransitionTo(Onboarding)
+                    .Publish(context => new OnboardingCompleted 
+                    {
+                        SubscriberId = context.Message.SubscriberId,
+                        Email = context.Message.Email
+                    })
+                    .Finalize()
+            );
         }
     }
 }

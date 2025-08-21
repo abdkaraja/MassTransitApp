@@ -22,6 +22,37 @@ namespace MassTransitApp.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("MassTransitApp.Saga.NewsletterOnboardingSagaData", b =>
+                {
+                    b.Property<Guid>("CorrelationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CurrentState")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("FollowUpEmailSent")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("OnboardingCompleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("SubscriberId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("WelcomeEmailSent")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("CorrelationId");
+
+                    b.ToTable("NewsletterOnboardingSagaData");
+                });
+
             modelBuilder.Entity("MassTransitApp.Subscriper", b =>
                 {
                     b.Property<Guid>("Id")

@@ -1,0 +1,6 @@
+@RoutingSlipApi_HostAddress = http://localhost:5194
+
+GET {{RoutingSlipApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
