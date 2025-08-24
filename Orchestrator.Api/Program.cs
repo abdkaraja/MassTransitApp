@@ -1,5 +1,6 @@
 using Account.Api.Consumers;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Orchestrator.Api.Activities;
 using Orchestrator.Api.Contexts;
 using Orchestrator.Api.Saga;
@@ -17,7 +18,10 @@ internal class Program
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
         //builder.Services.AddSingleton<IEndpointAddressProvider, RabbitMqEndpointAddressProvider>();
-
+        builder.Services.AddDbContext<OrchestratorContext>(opt =>
+        {
+            opt.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
+        });
         builder.Services.AddMassTransit(x =>
         {
             x.SetKebabCaseEndpointNameFormatter();

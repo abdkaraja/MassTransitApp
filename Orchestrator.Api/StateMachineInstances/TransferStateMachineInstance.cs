@@ -7,5 +7,6 @@ namespace Orchestrator.Api.StateMachineInstances
         public Guid CorrelationId { get; set; }
         public Guid TransactionId { get; set; }
         public string State { get; set; }
+        public DateTime LastUpdated { get; set; }
     }
 }

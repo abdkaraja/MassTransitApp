@@ -1,5 +1,7 @@
 ﻿using Automatonymous;
 using MassTransit;
+using MassTransit.Transports;
+using Orchestrator.Api.Saga;
 using SharedProj.Consumers;
 
 namespace Orchestrator.Api.Activities
@@ -7,10 +9,11 @@ namespace Orchestrator.Api.Activities
     public class AddTransactionLogActivity : IActivity<AddTransactionLogArguments, AddTransactionLog>
     {
         private IRequestClient<AddTransactionLogInput> _requestClient;
-
-        public AddTransactionLogActivity(IRequestClient<AddTransactionLogInput> requestClient)
+        private readonly IPublishEndpoint _publishEndpoint;
+        public AddTransactionLogActivity(IRequestClient<AddTransactionLogInput> requestClient, IPublishEndpoint publishEndpoint)
         {
             _requestClient = requestClient;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task<CompensationResult> Compensate(CompensateContext<AddTransactionLog> context)
@@ -32,6 +35,11 @@ namespace Orchestrator.Api.Activities
 
             if(!response.Message.Success)
                 throw new InvalidDataException("Error Error");
+
+            await _publishEndpoint.Publish(new AddTransactionLogEvent()
+            {
+                TransactionId = context.Arguments.TransactionId
+            });
 
             return context.Completed<AddTransactionLog>(new
             {

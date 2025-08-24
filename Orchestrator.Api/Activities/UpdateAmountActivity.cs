@@ -1,6 +1,7 @@
 ﻿using Automatonymous;
 using MassTransit;
 using MassTransit.Transports;
+using Orchestrator.Api.Saga;
 using SharedProj.Consumers;
 
 namespace Orchestrator.Api.Activities
@@ -9,11 +10,12 @@ namespace Orchestrator.Api.Activities
     {
         private IRequestClient<UpdateAmount> _requestClient;
         private IRequestClient<UpdateAmountCompensate> _requestClientCompensate;
-
-        public UpdateAmountActivity(IRequestClient<UpdateAmount> requestClient, IRequestClient<UpdateAmountCompensate> requestClientCompensate)
+        private readonly IPublishEndpoint _publishEndpoint;
+        public UpdateAmountActivity(IRequestClient<UpdateAmount> requestClient, IRequestClient<UpdateAmountCompensate> requestClientCompensate, IPublishEndpoint publishEndpoint)
         {
             _requestClient = requestClient;
             _requestClientCompensate = requestClientCompensate;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task<CompensationResult> Compensate(CompensateContext<UpdateAmountLog> context)
@@ -27,6 +29,12 @@ namespace Orchestrator.Api.Activities
                 Commission = context.Log.Commission,
                 TransactionId = context.Log.TransactionId,
             });
+
+            await _publishEndpoint.Publish(new UpdateAmountCompensateEvent()
+            {
+                TransactionId = context.Log.TransactionId
+            });
+
             return context.Compensated();
         }
 
@@ -46,6 +54,11 @@ namespace Orchestrator.Api.Activities
             {
                 throw new InvalidDataException("Insufficient balance");
             }
+
+            await _publishEndpoint.Publish(new UpdateAmountEvent()
+            {
+                TransactionId = context.Arguments.TransactionId
+            });
             return context.Completed<UpdateAmountLog>(new
             {
                 TransactionId = context.Arguments.TransactionId,

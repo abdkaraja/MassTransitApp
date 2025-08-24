@@ -1,4 +1,5 @@
 ﻿using MassTransit;
+using Orchestrator.Api.Saga;
 using SharedProj.Consumers;
 
 namespace Orchestrator.Api.Activities
@@ -6,10 +7,12 @@ namespace Orchestrator.Api.Activities
     public class CalculateCommissionActivity : IActivity<CalculateCommissionArguments, CalculateCommissionLog>
     {
         private readonly IRequestClient<CalculateCommissionInput> _requestClient;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public CalculateCommissionActivity(IRequestClient<CalculateCommissionInput> requestClient)
+        public CalculateCommissionActivity(IRequestClient<CalculateCommissionInput> requestClient, IPublishEndpoint publishEndpoint)
         {
             _requestClient = requestClient;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task<CompensationResult> Compensate(CompensateContext<CalculateCommissionLog> context)
@@ -19,12 +22,22 @@ namespace Orchestrator.Api.Activities
 
         public async Task<ExecutionResult> Execute(ExecuteContext<CalculateCommissionArguments> context)
         {
+            await _publishEndpoint.Publish(new StartTransactionEvent()
+            {
+                TransactionId = context.Arguments.TransactionId
+            });
+
             var calculateCommissionOutput = await _requestClient
                 .GetResponse<CalculateCommissionOutput>(new CalculateCommissionInput { Amount = context.Arguments.Amount });
 
             var parameters = new Dictionary<string, object>();
             parameters.Add("Commission", calculateCommissionOutput.Message.Commission);
-            
+
+            await _publishEndpoint.Publish(new OnCommissionCalculateEvent()
+            {
+                TransactionId = context.Arguments.TransactionId
+            });
+
             return context.CompletedWithVariables(new
             {
                 Amount = context.Arguments.Amount,

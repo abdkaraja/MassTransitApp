@@ -33,6 +33,11 @@ namespace Contract.Api.Consumers
                 });
 
                 await _contractDbContext.SaveChangesAsync();
+
+                await context.RespondAsync<AddTransactionLogOutput>(new
+                {
+                    Success = true
+                });
             }
             catch (Exception ex) 
             {
